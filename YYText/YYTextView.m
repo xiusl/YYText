@@ -1469,6 +1469,9 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     if (notify) [_inputDelegate textWillChange:self];
     NSRange newRange = NSMakeRange(range.asRange.location, text.length);
     [_innerText replaceCharactersInRange:range.asRange withString:text];
+    if (text.length > 0) {
+        [_innerText addAttributes:_innerText.yy_attributes range:newRange];
+    }
     [_innerText yy_removeDiscontinuousAttributesInRange:newRange];
     if (notify) [_inputDelegate textDidChange:self];
 }
