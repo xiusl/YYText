@@ -1470,7 +1470,10 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     NSRange newRange = NSMakeRange(range.asRange.location, text.length);
     [_innerText replaceCharactersInRange:range.asRange withString:text];
     if (text.length > 0) {
-        [_innerText addAttributes:_innerText.yy_attributes range:newRange];
+        NSMutableAttributedString *m = [_innerText mutableCopy];
+        m.yy_color = [UIColor blackColor];
+        [_innerText addAttributes:m.yy_attributes range:newRange];
+//        [_innerText addAttributes:@{NSForegroundColorAttributeName:self.textColor} range:newRange];
     }
     [_innerText yy_removeDiscontinuousAttributesInRange:newRange];
     if (notify) [_inputDelegate textDidChange:self];
@@ -1480,9 +1483,13 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 - (void)_updateAttributesHolder {
     if (_innerText.length > 0) {
         NSUInteger index = _selectedTextRange.end.offset == 0 ? 0 : _selectedTextRange.end.offset - 1;
+        
         NSDictionary *attributes = [_innerText yy_attributesAtIndex:index];
+        
+    
         if (!attributes) attributes = @{};
         _typingAttributesHolder.yy_attributes = attributes;
+        _typingAttributesHolder.yy_color = [UIColor blackColor];
         [_typingAttributesHolder yy_removeDiscontinuousAttributesInRange:NSMakeRange(0, _typingAttributesHolder.length)];
         [_typingAttributesHolder removeAttribute:YYTextBorderAttributeName range:NSMakeRange(0, _typingAttributesHolder.length)];
         [_typingAttributesHolder removeAttribute:YYTextBackgroundBorderAttributeName range:NSMakeRange(0, _typingAttributesHolder.length)];
@@ -3330,6 +3337,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         [self _resetRedoStack];
     }
     
+
     BOOL needApplyHolderAttribute = NO;
     if (_innerText.length > 0 && _markedTextRange) {
         [self _updateAttributesHolder];
@@ -3348,6 +3356,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     if (_markedTextRange == nil) {
         _markedTextRange = [YYTextRange rangeWithRange:NSMakeRange(_selectedTextRange.end.offset, markedText.length)];
         [_innerText replaceCharactersInRange:NSMakeRange(_selectedTextRange.end.offset, 0) withString:markedText];
+//        [_innerText setAttributes:_innerText.yy_attributes range:_markedTextRange.asRange];
         _selectedTextRange = [YYTextRange rangeWithRange:NSMakeRange(_selectedTextRange.start.offset + selectedRange.location, selectedRange.length)];
     } else {
         _markedTextRange = [self _correctedTextRange:_markedTextRange];

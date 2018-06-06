@@ -25,6 +25,7 @@
 - (instancetype)init {
     self = [super init];
     NSString *pattern = @"[-_a-zA-Z@\\.]+[ ,\\n]";
+    pattern = @"@(.*?) ";
     self.regex = [[NSRegularExpression alloc] initWithPattern:pattern options:kNilOptions error:nil];
     return self;
 }
@@ -34,9 +35,11 @@
         if (!result) return;
         NSRange range = result.range;
         if (range.location == NSNotFound || range.length < 1) return;
-        if ([text attribute:YYTextBindingAttributeName atIndex:range.location effectiveRange:NULL]) return;
+        if ([text attribute:YYTextBindingAttributeName atIndex:range.location effectiveRange:NULL]) {
+            return;
+        }
         
-        NSRange bindlingRange = NSMakeRange(range.location, range.length - 1);
+        NSRange bindlingRange = NSMakeRange(range.location, range.length);
         YYTextBinding *binding = [YYTextBinding bindingWithDeleteConfirm:YES];
         [text yy_setTextBinding:binding range:bindlingRange]; /// Text binding
         [text yy_setColor:[UIColor colorWithRed:0.000 green:0.519 blue:1.000 alpha:1.000] range:bindlingRange];
@@ -62,7 +65,7 @@
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
     
-    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:@"sjobs@apple.com, apple@apple.com, banana@banana.com, pear@pear.com "];
+    NSMutableAttributedString *text = [[NSMutableAttributedString alloc] initWithString:@"sa@dn @asd sadas"];
     text.yy_font = [UIFont systemFontOfSize:17];
     text.yy_lineSpacing = 5;
     text.yy_color = [UIColor blackColor];
