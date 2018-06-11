@@ -27,6 +27,12 @@
             [mode hasSuffix:@"InitializationRunLoopMode"]) {
             return nil;
         }
+        // iOS 11
+        if ( (mode.length == 21)&&
+            [mode hasPrefix:@"kCF"] &&
+            [mode hasSuffix:@"RunLoopDefaultMode"]) {
+            return nil;
+        }
     }
     
     static dispatch_once_t onceToken;
